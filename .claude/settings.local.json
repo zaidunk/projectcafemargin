@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(cmd /c \"cd C:\\\\Users\\\\farsya\\\\ProjectCafeMargin\\\\cafemargin-app\\\\backend && pip install -r requirements.txt\")",
+      "Bash(cat \"C:\\\\Users\\\\farsya\\\\Downloads\\\\DataProcessingSeharga1JT \\(1\\).ipynb\")",
+      "Bash(python -c \"import json; nb=json.load\\(open\\(r''C:\\\\Users\\\\farsya\\\\Downloads\\\\DataProcessingSeharga1JT \\(1\\).ipynb'',''r'',encoding=''utf-8''\\)\\); print\\(len\\(nb[''cells'']\\)\\)\")",
+      "Bash(python -c \"import json; nb=json.load\\(open\\(r''C:/Users/farsya/Downloads/DataProcessingSeharga1JT \\(1\\).ipynb'',''r'',encoding=''utf-8''\\)\\); print\\(len\\(nb[''cells'']\\)\\)\")",
+      "Bash(python _read_nb.py)",
+      "Bash(python C:/Users/farsya/ProjectCafeMargin/_read_nb.py)",
+      "Bash(rm -f cafemargin.db)",
+      "Bash(python seed.py)",
+      "Bash(python -c \"import os; os.chdir\\('C:/Users/farsya/ProjectCafeMargin/cafemargin-app/backend'\\); f='cafemargin.db'; os.path.exists\\(f\\) and os.remove\\(f\\); print\\('DB removed' if not os.path.exists\\(f\\) else 'still exists'\\)\")"
+    ]
+  }
+}
