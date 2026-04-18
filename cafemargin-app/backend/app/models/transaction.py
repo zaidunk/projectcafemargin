@@ -26,7 +26,7 @@ class Transaction(Base):
     gross_sales = Column(Float, default=0.0)      # before discount
     discount = Column(Float, default=0.0)          # discount amount
     payment_method = Column(String, nullable=True)  # QRIS, Cash, GoPay, etc.
-    collected_by = Column(String, nullable=True)    # Staff who collected payment
+    # collected_by = Column(String, nullable=True)    # Staff who collected payment
     receipt_number = Column(String, nullable=True)
     upload_batch = Column(String, nullable=True)
     source_format = Column(String, default="simple")  # "moka" | "simple"

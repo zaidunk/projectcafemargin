@@ -145,7 +145,7 @@ def _process_moka(df: pd.DataFrame, cafe_id: int, batch_id: str, db: Session) ->
         discount = _to_number(row.get(get_col("discounts") or "Discounts", 0) or 0)
         payment_method = str(row.get(get_col("payment method") or "Payment Method", "") or "")
         receipt_number = str(row.get(get_col("receipt number") or "Receipt Number", "") or "")
-        collected_by   = str(row.get(get_col("collected by")   or "Collected By",   "") or "")
+        # collected_by   = str(row.get(get_col("collected by")   or "Collected By",   "") or "")
 
         # Parse items
         items_col = get_col("items")
@@ -194,7 +194,7 @@ def _process_moka(df: pd.DataFrame, cafe_id: int, batch_id: str, db: Session) ->
                 gross_sales=(gross_sales / total_qty * qty) if total_qty > 0 else 0,
                 discount=(discount / total_qty * qty) if total_qty > 0 else 0,
                 payment_method=payment_method.strip(),
-                collected_by=collected_by.strip() or None,
+                # collected_by=collected_by.strip() or None,
                 receipt_number=receipt_number.strip(),
                 upload_batch=batch_id,
                 source_format="moka",
@@ -235,7 +235,7 @@ def _process_simple(df: pd.DataFrame, cafe_id: int, batch_id: str) -> list:
 
     records = []
     for row in df.to_dict(orient="records"):
-        _collected = str(row.get("collected_by", "") or "").strip()
+        # _collected = str(row.get("collected_by", "") or "").strip()
         records.append(Transaction(
             cafe_id=cafe_id,
             date=row["date"].date(),
@@ -246,7 +246,7 @@ def _process_simple(df: pd.DataFrame, cafe_id: int, batch_id: str) -> list:
             unit_price=float(row["unit_price"]),
             hpp=float(row["hpp"]),
             total_revenue=float(row["total_revenue"]),
-            collected_by=_collected or None,
+            # collected_by=_collected or None,
             upload_batch=batch_id,
             source_format="simple",
         ))
@@ -261,7 +261,7 @@ def _read_file_bytes(content: bytes, filename: str) -> pd.DataFrame:
         # Try different encodings
         for enc in ("utf-8", "utf-8-sig", "latin-1", "cp1252"):
             try:
-                return pd.read_csv(io.BytesIO(content), encoding=enc, on_bad_lines="skip")
+                return pd.read_csv(io.BytesIO(content), encoding=enc, on_bad_lines="skip", low_memory=False)
             except Exception:
                 continue
         raise HTTPException(status_code=400, detail="Tidak bisa membaca file CSV")

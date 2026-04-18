@@ -10,7 +10,12 @@
       "Bash(python C:/Users/farsya/ProjectCafeMargin/_read_nb.py)",
       "Bash(rm -f cafemargin.db)",
       "Bash(python seed.py)",
-      "Bash(python -c \"import os; os.chdir\\('C:/Users/farsya/ProjectCafeMargin/cafemargin-app/backend'\\); f='cafemargin.db'; os.path.exists\\(f\\) and os.remove\\(f\\); print\\('DB removed' if not os.path.exists\\(f\\) else 'still exists'\\)\")"
+      "Bash(python -c \"import os; os.chdir\\('C:/Users/farsya/ProjectCafeMargin/cafemargin-app/backend'\\); f='cafemargin.db'; os.path.exists\\(f\\) and os.remove\\(f\\); print\\('DB removed' if not os.path.exists\\(f\\) else 'still exists'\\)\")",
+      "Bash(python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload)",
+      "Bash(curl -s http://localhost:8000/docs)",
+      "WebFetch(domain:cafemargin-web--cafe-margin.asia-southeast1.hosted.app)",
+      "WebFetch(domain:xolvon-pcm2.hf.space)",
+      "Bash(cmd *)"
     ]
   }
 }

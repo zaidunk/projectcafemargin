@@ -48,8 +48,8 @@ def load_transactions_df(
         columns.append(Transaction.payment_method)
     if include_receipt:
         columns.append(Transaction.receipt_number)
-    if include_collected_by:
-        columns.append(Transaction.collected_by)
+    # if include_collected_by:
+    #     columns.append(Transaction.collected_by)
 
     rows = db.query(*columns).filter(
         Transaction.cafe_id == cafe_id,
