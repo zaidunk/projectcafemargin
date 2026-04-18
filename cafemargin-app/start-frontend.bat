@@ -1,5 +1,5 @@
 @echo off
-title CafeMargin Frontend - React App
+title CafeMargin Frontend - Next.js App
 color 0B
 echo ============================================
 echo    CafeMargin Frontend - Starting...
@@ -8,7 +8,7 @@ echo.
 
 cd /d "%~dp0frontend"
 
-echo [START] Menjalankan Vite dev server di http://localhost:5173
+echo [START] Menjalankan Next.js dev server di http://localhost:3000
 echo.
-npm run dev
+call npm run dev
 pause

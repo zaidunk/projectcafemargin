@@ -1,16 +1,20 @@
 import pandas as pd
 import numpy as np
-from typing import Any
+from typing import Any, Optional, Iterable
 
 
-def process_transactions(df: pd.DataFrame) -> dict[str, Any]:
+def process_transactions(df: pd.DataFrame, include: Optional[Iterable[str]] = None) -> dict[str, Any]:
     """
     Core analytics engine.
     Input: DataFrame dengan kolom: date, hour, item_name, category, quantity, unit_price, hpp, total_revenue
     Output: dict berisi semua analytics results
     """
+    include_set = set(include) if include is not None else None
     if df.empty:
-        return _empty_result()
+        empty = _empty_result()
+        if include_set is None:
+            return empty
+        return {key: empty.get(key) for key in include_set}
 
     df = df.copy()
     df["date"] = pd.to_datetime(df["date"])
@@ -21,28 +25,58 @@ def process_transactions(df: pd.DataFrame) -> dict[str, Any]:
         0
     )
 
-    return {
-        "summary": _summary(df),
-        "revenue_by_date": _revenue_by_date(df),
-        "revenue_by_hour": _revenue_by_hour(df),
-        "revenue_by_day_of_week": _revenue_by_dow(df),
-        "margin_by_item": _margin_by_item(df),
-        "margin_snapshot": _margin_snapshot(df),
-        "top_leakages": _top_leakages(df),
-        "golden_hours": _golden_hours(df),
-        "dead_hours": _dead_hours(df),
-        "menu_matrix": _menu_matrix(df),
-        "top_items_by_revenue": _top_items(df, "total_revenue", 10),
-        "top_items_by_qty": _top_items(df, "quantity", 10),
-        "category_breakdown": _category_breakdown(df),
-        "payment_method_breakdown": _payment_method_breakdown(df),
-    }
+    def want(key: str) -> bool:
+        return include_set is None or key in include_set
+
+    results: dict[str, Any] = {}
+    if want("summary"):
+        results["summary"] = _summary(df)
+    if want("revenue_by_date"):
+        results["revenue_by_date"] = _revenue_by_date(df)
+    if want("revenue_by_hour"):
+        results["revenue_by_hour"] = _revenue_by_hour(df)
+    if want("revenue_by_day_of_week"):
+        results["revenue_by_day_of_week"] = _revenue_by_dow(df)
+    if want("margin_by_item"):
+        results["margin_by_item"] = _margin_by_item(df)
+    if want("margin_snapshot"):
+        results["margin_snapshot"] = _margin_snapshot(df)
+    if want("top_leakages"):
+        results["top_leakages"] = _top_leakages(df)
+    if want("golden_hours"):
+        results["golden_hours"] = _golden_hours(df)
+    if want("dead_hours"):
+        results["dead_hours"] = _dead_hours(df)
+    if want("menu_matrix"):
+        results["menu_matrix"] = _menu_matrix(df)
+    if want("top_items_by_revenue"):
+        results["top_items_by_revenue"] = _top_items(df, "total_revenue", 10)
+    if want("top_items_by_qty"):
+        results["top_items_by_qty"] = _top_items(df, "quantity", 10)
+    if want("category_breakdown"):
+        results["category_breakdown"] = _category_breakdown(df)
+    if want("payment_method_breakdown"):
+        results["payment_method_breakdown"] = _payment_method_breakdown(df)
+    if want("purchase_behavior"):
+        results["purchase_behavior"] = _purchase_behavior(df)
+    if want("revenue_by_month"):
+        results["revenue_by_month"] = _revenue_by_month(df)
+    if want("revenue_by_week"):
+        results["revenue_by_week"] = _revenue_by_week(df)
+    if want("category_contribution"):
+        results["category_contribution"] = _category_contribution(df)
+    return results
 
 
 def _summary(df: pd.DataFrame) -> dict:
+    if "receipt_number" in df.columns and df["receipt_number"].astype(str).str.strip().ne("").any():
+        total_transactions = int(df.loc[df["receipt_number"].astype(str).str.strip() != "", "receipt_number"].nunique())
+    else:
+        total_transactions = int(len(df))
     return {
         "total_revenue": float(df["total_revenue"].sum()),
-        "total_transactions": int(len(df)),
+        "total_transactions": total_transactions,
+        "total_line_items": int(len(df)),
         "total_qty": int(df["quantity"].sum()),
         "avg_transaction_value": float(df["total_revenue"].mean()),
         "total_gross_profit": float(df["gross_profit"].sum()),
@@ -56,12 +90,18 @@ def _summary(df: pd.DataFrame) -> dict:
 
 
 def _revenue_by_date(df: pd.DataFrame) -> list[dict]:
-    grouped = (
-        df.groupby("date")
-        .agg(revenue=("total_revenue", "sum"), transactions=("id", "count") if "id" in df.columns else ("total_revenue", "count"))
-        .reset_index()
-        .sort_values("date")
-    )
+    if "receipt_number" in df.columns:
+        df2 = df.copy()
+        df2["receipt_number"] = df2["receipt_number"].astype(str).str.strip()
+        grouped = df2.groupby("date").agg(
+            revenue=("total_revenue", "sum"),
+            transactions=("receipt_number", lambda s: s[s != ""].nunique() or len(s)),
+        ).reset_index().sort_values("date")
+    else:
+        grouped = df.groupby("date").agg(
+            revenue=("total_revenue", "sum"),
+            transactions=("id", "count") if "id" in df.columns else ("total_revenue", "count"),
+        ).reset_index().sort_values("date")
     return [
         {"date": str(row["date"].date()), "revenue": float(row["revenue"]), "transactions": int(row["transactions"])}
         for _, row in grouped.iterrows()
@@ -85,6 +125,7 @@ def _revenue_by_hour(df: pd.DataFrame) -> list[dict]:
 
 def _revenue_by_dow(df: pd.DataFrame) -> list[dict]:
     dow_map = {0: "Senin", 1: "Selasa", 2: "Rabu", 3: "Kamis", 4: "Jumat", 5: "Sabtu", 6: "Minggu"}
+    df = df.copy()
     df["dow"] = df["date"].dt.dayofweek
     grouped = df.groupby("dow").agg(revenue=("total_revenue", "sum")).reset_index()
     all_days = pd.DataFrame({"dow": range(7)})
@@ -232,7 +273,9 @@ def _top_items(df: pd.DataFrame, by: str, n: int) -> list[dict]:
     grouped = df.groupby("item_name").agg(
         total_revenue=("total_revenue", "sum"),
         total_qty=("quantity", "sum"),
-    ).reset_index().sort_values(by, ascending=False).head(n)
+    ).reset_index()
+    sort_key = "total_qty" if by == "quantity" else by
+    grouped = grouped.sort_values(sort_key, ascending=False).head(n)
     return [
         {"item_name": row["item_name"], "total_revenue": float(row["total_revenue"]), "total_qty": int(row["total_qty"])}
         for _, row in grouped.iterrows()
@@ -264,11 +307,101 @@ def _payment_method_breakdown(df: pd.DataFrame) -> list[dict]:
     ]
 
 
+def _purchase_behavior(df: pd.DataFrame) -> dict:
+    """Purchase behavior: solo vs multi, basket value by item count, avg items per tx"""
+    if "receipt_number" not in df.columns or df["receipt_number"].isna().all():
+        return {
+            "avg_items_per_tx": 0, "solo_pct": 0, "multi_pct": 0,
+            "basket_value_by_count": [], "item_count_distribution": [],
+        }
+    df2 = df.copy()
+    df2["receipt_number"] = df2["receipt_number"].fillna("").astype(str).str.strip()
+    df2 = df2[df2["receipt_number"] != ""]
+    if df2.empty:
+        return {"avg_items_per_tx": 0, "solo_pct": 0, "multi_pct": 0, "basket_value_by_count": [], "item_count_distribution": []}
+
+    items_per_tx = df2.groupby("receipt_number")["item_name"].nunique()
+    sales_per_tx = df2.groupby("receipt_number")["total_revenue"].sum()
+    tx_df = pd.DataFrame({"items": items_per_tx, "sales": sales_per_tx})
+
+    total = len(tx_df)
+    solo = int((tx_df["items"] == 1).sum())
+    multi = int((tx_df["items"] > 1).sum())
+
+    def _group(n):
+        if n == 1: return "1 item"
+        if n == 2: return "2 items"
+        if n == 3: return "3 items"
+        return "4+ items"
+
+    tx_df["group"] = tx_df["items"].apply(_group)
+    dist = tx_df.groupby("group").agg(count=("items", "count"), avg_basket=("sales", "mean")).reset_index()
+    order = ["1 item", "2 items", "3 items", "4+ items"]
+    dist["_ord"] = dist["group"].map({k: i for i, k in enumerate(order)})
+    dist = dist.sort_values("_ord").drop(columns="_ord")
+
+    return {
+        "avg_items_per_tx": float(tx_df["items"].mean()),
+        "solo_pct": float(solo / total * 100) if total > 0 else 0,
+        "multi_pct": float(multi / total * 100) if total > 0 else 0,
+        "solo_avg_basket": float(tx_df[tx_df["items"] == 1]["sales"].mean()) if solo > 0 else 0,
+        "multi_avg_basket": float(tx_df[tx_df["items"] > 1]["sales"].mean()) if multi > 0 else 0,
+        "basket_value_by_count": [
+            {"group": row["group"], "count": int(row["count"]), "avg_basket": float(row["avg_basket"])}
+            for _, row in dist.iterrows()
+        ],
+        "item_count_distribution": [
+            {"group": row["group"], "count": int(row["count"]), "pct": float(row["count"] / total * 100) if total > 0 else 0}
+            for _, row in dist.iterrows()
+        ],
+    }
+
+
+def _revenue_by_month(df: pd.DataFrame) -> list[dict]:
+    df2 = df.copy()
+    df2["ym"] = df2["date"].dt.to_period("M")
+    grouped = df2.groupby("ym").agg(revenue=("total_revenue", "sum"), transactions=("total_revenue", "count")).reset_index()
+    grouped = grouped.sort_values("ym")
+    return [
+        {"month": str(row["ym"]), "revenue": float(row["revenue"]), "transactions": int(row["transactions"])}
+        for _, row in grouped.iterrows()
+    ]
+
+
+def _revenue_by_week(df: pd.DataFrame) -> list[dict]:
+    df2 = df.copy()
+    df2["week"] = df2["date"].dt.to_period("W")
+    grouped = df2.groupby("week").agg(revenue=("total_revenue", "sum")).reset_index().sort_values("week")
+    return [
+        {"week": str(row["week"]), "revenue": float(row["revenue"])}
+        for _, row in grouped.iterrows()
+    ]
+
+
+def _category_contribution(df: pd.DataFrame) -> list[dict]:
+    total = float(df["total_revenue"].sum())
+    grouped = df.groupby("category").agg(
+        total_revenue=("total_revenue", "sum"),
+        total_qty=("quantity", "sum"),
+        avg_margin_pct=("margin_pct", "mean"),
+    ).reset_index().sort_values("total_revenue", ascending=False)
+    return [
+        {
+            "category": row["category"] or "Lainnya",
+            "total_revenue": float(row["total_revenue"]),
+            "pct_contribution": float(row["total_revenue"] / total * 100) if total > 0 else 0,
+            "total_qty": int(row["total_qty"]),
+            "avg_margin_pct": float(row["avg_margin_pct"]),
+        }
+        for _, row in grouped.iterrows()
+    ]
+
+
 def _empty_result() -> dict:
     return {
-        "summary": {"total_revenue": 0, "total_transactions": 0, "total_qty": 0, "avg_transaction_value": 0,
-                    "total_gross_profit": 0, "overall_margin_pct": 0, "unique_items": 0,
-                    "date_range_start": None, "date_range_end": None},
+        "summary": {"total_revenue": 0, "total_transactions": 0, "total_line_items": 0, "total_qty": 0,
+                    "avg_transaction_value": 0, "total_gross_profit": 0, "overall_margin_pct": 0,
+                    "unique_items": 0, "date_range_start": None, "date_range_end": None},
         "revenue_by_date": [],
         "revenue_by_hour": [{"hour": h, "revenue": 0, "avg_revenue": 0} for h in range(24)],
         "revenue_by_day_of_week": [],
@@ -282,4 +415,8 @@ def _empty_result() -> dict:
         "top_items_by_qty": [],
         "category_breakdown": [],
         "payment_method_breakdown": [],
+        "purchase_behavior": {"avg_items_per_tx": 0, "solo_pct": 0, "multi_pct": 0, "solo_avg_basket": 0, "multi_avg_basket": 0, "basket_value_by_count": [], "item_count_distribution": []},
+        "revenue_by_month": [],
+        "revenue_by_week": [],
+        "category_contribution": [],
     }

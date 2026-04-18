@@ -1,11 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from pydantic import BaseModel
 from typing import Optional
 from app.database import get_db
 from app.models.cafe import Cafe
 from app.models.user import User
 from app.auth import hash_password, require_superadmin
+from app.security import validate_password
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
 
@@ -27,20 +29,33 @@ class UserCreate(BaseModel):
 
 
 @router.get("/cafes")
-def list_cafes(db: Session = Depends(get_db), _=Depends(require_superadmin)):
-    cafes = db.query(Cafe).all()
+def list_cafes(
+    limit: int = Query(200, ge=1, le=1000),
+    offset: int = Query(0, ge=0),
+    db: Session = Depends(get_db),
+    _=Depends(require_superadmin),
+):
+    rows = (
+        db.query(Cafe, func.count(User.id).label("user_count"))
+        .outerjoin(User, User.cafe_id == Cafe.id)
+        .group_by(Cafe.id)
+        .order_by(Cafe.id)
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
     return [
         {
-            "id": c.id,
-            "name": c.name,
-            "owner_name": c.owner_name,
-            "address": c.address,
-            "phone": c.phone,
-            "subscription_level": c.subscription_level,
-            "created_at": c.created_at,
-            "user_count": len(c.users),
+            "id": cafe.id,
+            "name": cafe.name,
+            "owner_name": cafe.owner_name,
+            "address": cafe.address,
+            "phone": cafe.phone,
+            "subscription_level": cafe.subscription_level,
+            "created_at": cafe.created_at,
+            "user_count": int(user_count or 0),
         }
-        for c in cafes
+        for cafe, user_count in rows
     ]
 
 
@@ -65,8 +80,17 @@ def update_cafe(cafe_id: int, body: CafeCreate, db: Session = Depends(get_db), _
 
 
 @router.get("/users")
-def list_users(db: Session = Depends(get_db), _=Depends(require_superadmin)):
-    users = db.query(User).all()
+def list_users(
+    limit: int = Query(200, ge=1, le=2000),
+    offset: int = Query(0, ge=0),
+    cafe_id: Optional[int] = Query(None),
+    db: Session = Depends(get_db),
+    _=Depends(require_superadmin),
+):
+    query = db.query(User).order_by(User.id).offset(offset).limit(limit)
+    if cafe_id is not None:
+        query = query.filter(User.cafe_id == cafe_id)
+    users = query.all()
     return [
         {
             "id": u.id,
@@ -86,6 +110,9 @@ def create_user(body: UserCreate, db: Session = Depends(get_db), _=Depends(requi
     existing = db.query(User).filter(User.email == body.email).first()
     if existing:
         raise HTTPException(status_code=400, detail="Email sudah terdaftar")
+    error = validate_password(body.password)
+    if error:
+        raise HTTPException(status_code=400, detail=error)
     user = User(
         email=body.email,
         password_hash=hash_password(body.password),

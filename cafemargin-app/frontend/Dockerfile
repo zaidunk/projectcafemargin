@@ -3,5 +3,5 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-EXPOSE 5173
-CMD ["npm", "run", "dev", "--", "--host"]
+EXPOSE 3000
+CMD ["npm", "run", "dev", "--", "-p", "3000", "--hostname", "0.0.0.0"]

@@ -5,10 +5,10 @@ echo ========================================
 cd /d "%~dp0frontend"
 
 echo [1/2] Installing Node.js dependencies...
-npm install
+call npm install
 
 echo.
-echo [2/2] Starting React dev server...
-echo Frontend running at: http://localhost:5173
+echo [2/2] Starting Next.js dev server...
+echo Frontend running at: http://localhost:3000
 echo.
-npm run dev
+call npm run dev

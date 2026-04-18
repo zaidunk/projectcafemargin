@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Date, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, Date, DateTime, ForeignKey, Index
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 from app.database import Base
@@ -6,6 +6,9 @@ from app.database import Base
 
 class ActionPlan(Base):
     __tablename__ = "action_plans"
+    __table_args__ = (
+        Index("ix_action_plan_cafe_due", "cafe_id", "due_date"),
+    )
 
     id = Column(Integer, primary_key=True, index=True)
     cafe_id = Column(Integer, ForeignKey("cafes.id"), nullable=False)
@@ -20,6 +23,9 @@ class ActionPlan(Base):
 
 class KPITarget(Base):
     __tablename__ = "kpi_targets"
+    __table_args__ = (
+        Index("ix_kpi_target_cafe_metric", "cafe_id", "metric_name"),
+    )
 
     id = Column(Integer, primary_key=True, index=True)
     cafe_id = Column(Integer, ForeignKey("cafes.id"), nullable=False)

@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+import logging
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -6,8 +7,17 @@ from app.database import get_db
 from app.models.user import User
 from app.models.cafe import Cafe
 from app.auth import hash_password, verify_password, create_access_token, get_current_user
+from app.security import (
+    get_client_ip,
+    rate_limit_key,
+    is_rate_limited,
+    register_failed_attempt,
+    clear_failed_attempts,
+    validate_password,
+)
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
+logger = logging.getLogger("cafemargin.auth")
 
 
 class LoginResponse(BaseModel):
@@ -28,10 +38,20 @@ class MeResponse(BaseModel):
 
 
 @router.post("/login", response_model=LoginResponse)
-def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+def login(request: Request, form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    client_ip = get_client_ip(request)
+    key = rate_limit_key(form.username, client_ip)
+    if is_rate_limited(key):
+        raise HTTPException(status_code=429, detail="Terlalu banyak percobaan login. Coba lagi beberapa menit")
+
     user = db.query(User).filter(User.email == form.username).first()
     if not user or not verify_password(form.password, user.password_hash):
+        register_failed_attempt(key)
+        logger.warning("Login gagal untuk %s dari %s", form.username, client_ip)
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email atau password salah")
+
+    clear_failed_attempts(key)
+    logger.info("Login sukses untuk %s dari %s", user.email, client_ip)
 
     token = create_access_token({"sub": str(user.id), "role": user.role, "cafe_id": user.cafe_id})
 
@@ -103,6 +123,11 @@ class ChangePassword(BaseModel):
 def change_password(body: ChangePassword, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     if not verify_password(body.current_password, current_user.password_hash):
         raise HTTPException(status_code=400, detail="Password lama tidak sesuai")
+    if body.current_password == body.new_password:
+        raise HTTPException(status_code=400, detail="Password baru tidak boleh sama dengan yang lama")
+    error = validate_password(body.new_password)
+    if error:
+        raise HTTPException(status_code=400, detail=error)
     current_user.password_hash = hash_password(body.new_password)
     db.commit()
     return {"message": "Password berhasil diubah"}

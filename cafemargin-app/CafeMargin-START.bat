@@ -7,25 +7,25 @@ echo       by PT Xolvon Kehidupan Cerdas Abadi
 echo ============================================
 echo.
 echo [1/2] Starting Backend (FastAPI)...
-start "CafeMargin Backend" cmd /k "cd /d "%~dp0backend" && (if not exist cafemargin.db (echo Seeding database... && python seed.py && echo Database ready!)) && echo. && echo Starting API server... && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+start "CafeMargin Backend" /D "%~dp0" cmd /k call start_backend.bat
 
 :: Wait 3 seconds for backend to initialize
 timeout /t 3 /nobreak >nul
 
-echo [2/2] Starting Frontend (React + Vite)...
-start "CafeMargin Frontend" cmd /k "cd /d "%~dp0frontend" && npm run dev"
+echo [2/2] Starting Frontend (Next.js)...
+start "CafeMargin Frontend" /D "%~dp0" cmd /k call start_frontend.bat
 
 :: Wait 5 seconds then open browser
 timeout /t 5 /nobreak >nul
 
 echo.
 echo [OPEN] Membuka browser...
-start http://localhost:5173
+start http://localhost:3000
 
 echo.
 echo ============================================
 echo    CafeMargin is RUNNING!
-echo    Frontend: http://localhost:5173
+echo    Frontend: http://localhost:3000
 echo    Backend:  http://localhost:8000
 echo    Login:    admin / admin
 echo ============================================

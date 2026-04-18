@@ -9,6 +9,24 @@
 
 ## Cara Cepat (Tanpa Docker)
 
+### 0. Supabase (Wajib untuk Reports & Storage)
+
+Jika ingin memakai fitur laporan PDF dan storage, siapkan Supabase lebih dulu.
+
+1) Buat file `.env` di folder `cafemargin-app` (sejajar dengan `backend/` dan `frontend/`).
+	Salin isi dari `.env.example`, lalu isi minimal:
+	- `SUPABASE_URL`
+	- `SUPABASE_SERVICE_ROLE_KEY` (service role key, bukan anon key)
+
+2) Inisialisasi bucket (sekali saja):
+
+```bash
+cd cafemargin-app/backend
+python app/scripts/init_supabase_buckets.py
+```
+
+> Catatan: Tanpa Supabase, backend tetap bisa jalan, tetapi endpoint laporan/storage akan gagal.
+
 ### 1. Backend (FastAPI)
 
 ```bash
@@ -29,7 +47,7 @@ npm install
 npm run dev
 ```
 
-Frontend berjalan di: http://localhost:5173
+Frontend berjalan di: http://localhost:3000
 
 ---
 

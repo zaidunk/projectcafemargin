@@ -8,16 +8,34 @@
     "password": "Password",
     "submit": "Masuk",
     "loading": "Memproses...",
-    "error": "Email atau password salah"
+    "error": "Email atau password salah",
+    "no_account": "Belum punya akun?",
+    "create_account": "Create account"
+  },
+  "create_account": {
+    "title": "Buat Akun CafeMargin",
+    "subtitle": "Kirim template pesan via WhatsApp untuk pendaftaran",
+    "tagline": "Pendaftaran via WhatsApp",
+    "hero_title": "Daftar akun baru untuk cafe Anda",
+    "hero_desc": "Kami akan bantu aktivasi akun setelah pesan diterima. Proses cepat dan tanpa ribet.",
+    "message_label": "Template Pesan",
+    "message_note": "Anda bisa menambahkan detail tambahan setelah WhatsApp terbuka.",
+    "send_whatsapp": "Kirim via WhatsApp",
+    "back_login": "Kembali ke Login",
+    "sent_title": "Pesan WhatsApp siap dikirim",
+    "sent_desc": "Setelah mengirim pesan, Anda akan kembali ke halaman login."
   },
   "nav": {
     "dashboard": "Dashboard",
     "transactions": "Transaksi",
+    "upload_transaction": "Upload Transaction",
+    "template_guide": "Panduan Template",
     "margin": "Margin & HPP",
     "menu_performance": "Performa Menu",
     "peak_hours": "Jam Puncak",
     "kpi": "KPI & Action Plan",
     "reports": "Laporan",
+    "features": "Fitur",
     "settings": "Pengaturan",
     "forecast": "Prediksi Revenue",
     "discounts": "Analisis Diskon",
@@ -31,7 +49,16 @@
     "promo_simulator": "Simulasi Promo",
     "menu_optimizer": "Optimasi Menu",
     "admin": "Admin Panel",
+    "more": "More",
     "logout": "Keluar"
+  },
+  "features": {
+    "title": "Feature Hub",
+    "subtitle": "Pilih fitur yang ingin Anda gunakan untuk analisis lebih lanjut.",
+    "core": "Core Analytics",
+    "growth": "Growth & Optimization",
+    "insights": "Insights & Operations",
+    "admin": "Admin Tools"
   },
   "dashboard": {
     "welcome": "Selamat datang",
@@ -164,6 +191,104 @@
     "2": "GROWTH",
     "3": "CONTROL",
     "4": "SCALE"
+  },
+  "tips": {
+    "title": "Tips & Penjelasan",
+    "dashboard": [
+      "Revenue dihitung dari total_revenue semua transaksi dalam periode yang dipilih.",
+      "Margin % = (Revenue - HPP) / Revenue × 100. Isi HPP di Settings → Menu untuk akurasi.",
+      "Jam Puncak adalah jam dengan revenue di atas persentil ke-75.",
+      "Kebocoran Margin = item dengan margin di bawah target (40%). Prioritaskan item dengan volume tinggi."
+    ],
+    "margin": [
+      "Gross Profit = Total Revenue - Total HPP (Harga Pokok Penjualan).",
+      "Target margin sehat untuk cafe: minimal 40%. Di bawah 25% perlu tindakan segera.",
+      "Kebocoran teratas = item yang memiliki margin rendah DAN volume penjualan signifikan (≥1% total revenue).",
+      "Saran harga dihitung agar margin mencapai 40%: Saran Harga = HPP ÷ (1 - 0.4).",
+      "Jika HPP belum diisi, margin akan tampil 0. Lengkapi di Settings → Menu."
+    ],
+    "menu_performance": [
+      "Stars: Revenue tinggi & margin tinggi → pertahankan dan promosikan lebih luas.",
+      "Cash Cows: Revenue tinggi tapi margin rendah → efisiensi HPP atau naikkan harga sedikit.",
+      "Question Marks: Margin bagus tapi jarang laku → promosikan lebih aktif, coba di peak hour.",
+      "Dogs: Revenue rendah & margin rendah → evaluasi, reposisi, atau hapus dari menu.",
+      "Matrix dihitung menggunakan median revenue dan median margin sebagai batas kuadran."
+    ],
+    "peak_hours": [
+      "Golden Hours = jam dengan revenue di atas persentil ke-75 dari semua jam.",
+      "Dead Hours = jam dengan revenue di bawah persentil ke-25 (hanya jam yang ada transaksinya).",
+      "Strategi Golden Hours: upsell, paket bundling, staf ekstra, stok penuh.",
+      "Strategi Dead Hours: flash promo, happy hour, loyalty point 2x, menu spesial siang.",
+      "Data jam membutuhkan kolom 'hour' atau 'Time' dari data transaksi."
+    ],
+    "basket": [
+      "Basket Analysis menggunakan nomor struk (receipt_number) untuk mengelompokkan item per transaksi.",
+      "Support = seberapa sering pasangan item muncul dari semua transaksi (0-100%).",
+      "Confidence A→B = dari semua transaksi dengan item A, berapa persen juga ada item B.",
+      "Anchor = item yang sering dibundel bersama item lain (popularitas & support tinggi).",
+      "Companion = sering dibundel tapi kurang populer sendiri — cocok jadi cross-sell.",
+      "Rekomendasi bundling menggunakan harga bundle = total individual - 10% diskon."
+    ],
+    "forecast": [
+      "Forecast menggunakan regresi linear sederhana pada data revenue harian.",
+      "R² (R-Squared) mengukur akurasi model: nilai mendekati 1.0 berarti prediksi lebih akurat.",
+      "Semakin banyak data historis (minimal 14 hari), semakin akurat prediksinya.",
+      "Gunakan forecast untuk perencanaan stok, penggajian, dan target penjualan.",
+      "Confidence interval (band abu-abu) menunjukkan rentang kemungkinan revenue aktual."
+    ],
+    "discounts": [
+      "Discount ROI positif berarti diskon meningkatkan nilai transaksi rata-rata.",
+      "Bandingkan rata-rata revenue transaksi dengan vs tanpa diskon untuk ukur efektivitas.",
+      "Diskon terlalu sering di jam ramai (golden hours) bisa mengurangi profitabilitas.",
+      "Gunakan diskon strategis di dead hours untuk meningkatkan traffic pada jam sepi."
+    ],
+    "anomalies": [
+      "Anomali dideteksi menggunakan metode IQR (Interquartile Range).",
+      "Revenue outlier = transaksi dengan nilai di luar batas normal (Q1-1.5×IQR atau Q3+1.5×IQR).",
+      "Volume spike = jam dengan jumlah transaksi jauh di atas normal — bisa sinyal event khusus.",
+      "Investigasi anomali negatif (revenue sangat rendah) untuk menemukan potensi fraud atau kesalahan input."
+    ],
+    "comparison": [
+      "Perbandingan membandingkan periode saat ini vs periode sebelumnya (sama panjangnya).",
+      "Pertumbuhan positif (hijau) = performa lebih baik dari periode sebelumnya.",
+      "Gunakan perbandingan bulanan untuk evaluasi efektivitas strategi promosi."
+    ],
+    "customers": [
+      "Customer insights didasarkan pada pengelompokan pola pembelian per struk.",
+      "Transaksi single-item vs multi-item menunjukkan kedalaman pembelian pelanggan.",
+      "Basket value rata-rata meningkat signifikan pada pembelian 3+ item — dorong dengan bundling."
+    ],
+    "payments": [
+      "Metode pembayaran favorit membantu alokasi mesin kasir dan negosiasi fee MDR dengan bank.",
+      "QRIS dan dompet digital biasanya memiliki MDR lebih rendah daripada kartu kredit.",
+      "Dominasi satu metode bayar bisa jadi risiko — diversifikasi opsi pembayaran."
+    ],
+    "inventory": [
+      "Forecast inventori menggunakan rata-rata kuantitas terjual per hari × horizon forecast.",
+      "Stok aman (safety stock) dihitung dari variasi harian penjualan.",
+      "Item dengan variansi tinggi butuh buffer stock lebih besar untuk menghindari kehabisan."
+    ],
+    "promo_simulator": [
+      "Simulasi menghitung dampak diskon pada revenue dan profit berdasarkan data historis.",
+      "Volume boost = asumsi kenaikan penjualan akibat promosi (estimasi, perlu validasi lapangan).",
+      "Diskon yang optimal adalah yang meningkatkan profit total (bukan hanya revenue).",
+      "Cek kolom 'Profit After Promo' untuk memastikan promo tidak merugi."
+    ],
+    "menu_optimizer": [
+      "Menu optimizer mengkombinasikan analisis margin, volume, dan tren untuk memberi rekomendasi.",
+      "Prioritaskan item dengan skor tinggi di semua dimensi (revenue, margin, pertumbuhan).",
+      "Item dengan skor rendah di semua dimensi perlu dievaluasi — hapus atau reformulasi."
+    ],
+    "staff": [
+      "Data staff membutuhkan kolom 'collected_by' dari sistem POS (tersedia di Moka).",
+      "Ranking staff berdasarkan total revenue yang diproses, bukan jumlah jam kerja.",
+      "Gunakan data ini untuk evaluasi performa dan reward/insentif tim."
+    ],
+    "kpi": [
+      "Target KPI diset berdasarkan standar industri cafe dan data historis Anda.",
+      "Achievement di atas 100% berarti target terlampaui — perbarui target untuk periode berikutnya.",
+      "Action plan membantu menghubungkan insight data ke tindakan konkret tim."
+    ]
   },
   "common": {
     "loading": "Memuat...",

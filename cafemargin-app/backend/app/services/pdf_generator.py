@@ -129,7 +129,7 @@ def generate_executive_summary(analytics: dict, cafe_name: str, period: str) -> 
     if golden_hours:
         hours_str = ", ".join(f"{h:02d}:00" for h in golden_hours)
         pdf.multi_cell(0, 6, f"  {hours_str}")
-        pdf.cell(0, 5, "  → Rekomendasi: Upsell, bundling paket, tambah kapasitas staf", ln=True)
+        pdf.cell(0, 5, "  -> Rekomendasi: Upsell, bundling paket, tambah kapasitas staf", ln=True)
     else:
         pdf.cell(0, 6, "  Tidak ada data yang cukup", ln=True)
 
@@ -142,7 +142,7 @@ def generate_executive_summary(analytics: dict, cafe_name: str, period: str) -> 
     if dead_hours:
         hours_str = ", ".join(f"{h:02d}:00" for h in dead_hours)
         pdf.multi_cell(0, 6, f"  {hours_str}")
-        pdf.cell(0, 5, "  → Rekomendasi: Flash promo, happy hour, loyalty program", ln=True)
+        pdf.cell(0, 5, "  -> Rekomendasi: Flash promo, happy hour, loyalty program", ln=True)
     pdf.ln(4)
 
     # Top items
@@ -175,7 +175,7 @@ def generate_executive_summary(analytics: dict, cafe_name: str, period: str) -> 
     pdf.multi_cell(
         0, 5,
         "Laporan ini digenerate secara otomatis oleh CafeMargin Analytics Platform. "
-        "Untuk konsultasi lebih lanjut, hubungi tim CafeMargin — PT Xolvon Kehidupan Cerdas Abadi.",
+        "Untuk konsultasi lebih lanjut, hubungi tim CafeMargin - PT Xolvon Kehidupan Cerdas Abadi.",
         border=1, fill=True
     )
 

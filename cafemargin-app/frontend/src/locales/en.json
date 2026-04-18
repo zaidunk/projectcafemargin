@@ -8,16 +8,34 @@
     "password": "Password",
     "submit": "Sign In",
     "loading": "Signing in...",
-    "error": "Invalid email or password"
+    "error": "Invalid email or password",
+    "no_account": "No account yet?",
+    "create_account": "Create account"
+  },
+  "create_account": {
+    "title": "Create a CafeMargin Account",
+    "subtitle": "Send the template message via WhatsApp to register",
+    "tagline": "WhatsApp Registration",
+    "hero_title": "Register a new account for your cafe",
+    "hero_desc": "We will activate your account after receiving the message. Fast and simple.",
+    "message_label": "Message Template",
+    "message_note": "You can add more details after WhatsApp opens.",
+    "send_whatsapp": "Send via WhatsApp",
+    "back_login": "Back to Login",
+    "sent_title": "WhatsApp message ready",
+    "sent_desc": "After sending, you will return to the login page."
   },
   "nav": {
     "dashboard": "Dashboard",
     "transactions": "Transactions",
+    "upload_transaction": "Upload Transaction",
+    "template_guide": "Template Guide",
     "margin": "Margin & COGS",
     "menu_performance": "Menu Performance",
     "peak_hours": "Peak Hours",
     "kpi": "KPI & Action Plan",
     "reports": "Reports",
+    "features": "Features",
     "settings": "Settings",
     "forecast": "Revenue Forecast",
     "discounts": "Discount Analysis",
@@ -31,7 +49,16 @@
     "promo_simulator": "Promo Simulator",
     "menu_optimizer": "Menu Optimizer",
     "admin": "Admin Panel",
+    "more": "More",
     "logout": "Sign Out"
+  },
+  "features": {
+    "title": "Feature Hub",
+    "subtitle": "Choose the feature you want to explore next.",
+    "core": "Core Analytics",
+    "growth": "Growth & Optimization",
+    "insights": "Insights & Operations",
+    "admin": "Admin Tools"
   },
   "dashboard": {
     "welcome": "Welcome",
@@ -164,6 +191,104 @@
     "2": "GROWTH",
     "3": "CONTROL",
     "4": "SCALE"
+  },
+  "tips": {
+    "title": "Tips & Explanation",
+    "dashboard": [
+      "Revenue is the sum of total_revenue from all transactions in the selected period.",
+      "Margin % = (Revenue - COGS) / Revenue × 100. Fill in COGS in Settings → Menu for accuracy.",
+      "Peak Hour = hours where revenue is above the 75th percentile.",
+      "Margin Leakages = items with margin below target (40%). Prioritize high-volume items."
+    ],
+    "margin": [
+      "Gross Profit = Total Revenue - Total COGS (Cost of Goods Sold).",
+      "Healthy margin target for a cafe: at least 40%. Below 25% needs immediate action.",
+      "Top leakages = items with low margin AND significant sales volume (≥1% of total revenue).",
+      "Suggested price is calculated to reach 40% margin: Suggested Price = COGS ÷ (1 - 0.4).",
+      "If COGS is not filled, margin shows 0. Complete it in Settings → Menu."
+    ],
+    "menu_performance": [
+      "Stars: High revenue & high margin → keep and promote widely.",
+      "Cash Cows: High revenue but low margin → improve COGS efficiency or slightly raise price.",
+      "Question Marks: Good margin but rarely ordered → promote more actively, try during peak hours.",
+      "Dogs: Low revenue & low margin → evaluate, reposition, or remove from menu.",
+      "Matrix uses median revenue and median margin as quadrant thresholds."
+    ],
+    "peak_hours": [
+      "Golden Hours = hours with revenue above the 75th percentile of all hours.",
+      "Dead Hours = hours with revenue below the 25th percentile (only hours with transactions).",
+      "Golden Hours strategy: upsell, bundle packages, extra staff, full stock.",
+      "Dead Hours strategy: flash promos, happy hour, 2x loyalty points, special lunch menu.",
+      "Hour data requires the 'hour' or 'Time' column from your transaction data."
+    ],
+    "basket": [
+      "Basket Analysis uses receipt numbers to group items per transaction.",
+      "Support = how often an item pair appears across all transactions (0-100%).",
+      "Confidence A→B = of all transactions with item A, what % also has item B.",
+      "Anchor = items frequently bundled with others (high popularity & support).",
+      "Companion = frequently bundled but less popular alone — great for cross-selling.",
+      "Bundle recommendations use price = total individual - 10% discount."
+    ],
+    "forecast": [
+      "Forecast uses simple linear regression on daily revenue data.",
+      "R² (R-Squared) measures model accuracy: closer to 1.0 means better prediction.",
+      "More historical data (minimum 14 days) makes forecasts more accurate.",
+      "Use forecasts for stock planning, staffing, and sales targets.",
+      "Confidence interval (grey band) shows the range of likely actual revenue."
+    ],
+    "discounts": [
+      "Positive discount ROI means discounts increase average transaction value.",
+      "Compare avg revenue with vs without discounts to measure effectiveness.",
+      "Frequent discounts during peak hours (golden hours) can reduce profitability.",
+      "Use strategic discounts during dead hours to increase traffic in slow periods."
+    ],
+    "anomalies": [
+      "Anomalies are detected using the IQR (Interquartile Range) method.",
+      "Revenue outlier = transaction with value outside normal bounds (Q1-1.5×IQR or Q3+1.5×IQR).",
+      "Volume spike = hour with far more transactions than normal — may signal a special event.",
+      "Investigate negative anomalies (very low revenue) to find potential fraud or data entry errors."
+    ],
+    "comparison": [
+      "Comparison compares the current period vs the previous period (same length).",
+      "Positive growth (green) = better performance than the previous period.",
+      "Use monthly comparison to evaluate the effectiveness of promotional strategies."
+    ],
+    "customers": [
+      "Customer insights are based on purchase pattern grouping per receipt.",
+      "Single-item vs multi-item transactions show customer purchase depth.",
+      "Average basket value increases significantly for 3+ item purchases — encourage with bundling."
+    ],
+    "payments": [
+      "Favorite payment methods help allocate POS terminals and negotiate MDR fees with banks.",
+      "QRIS and digital wallets usually have lower MDR than credit cards.",
+      "Dominance of one payment method can be a risk — diversify payment options."
+    ],
+    "inventory": [
+      "Inventory forecast uses average quantity sold per day × forecast horizon.",
+      "Safety stock is calculated from daily sales variability.",
+      "High-variance items need a larger buffer stock to avoid stockouts."
+    ],
+    "promo_simulator": [
+      "The simulation calculates the impact of discounts on revenue and profit based on historical data.",
+      "Volume boost = assumed sales increase from the promotion (estimated, needs field validation).",
+      "The optimal discount is one that increases total profit (not just revenue).",
+      "Check the 'Profit After Promo' column to ensure the promo is not losing money."
+    ],
+    "menu_optimizer": [
+      "Menu optimizer combines margin, volume, and trend analysis to give recommendations.",
+      "Prioritize items with high scores across all dimensions (revenue, margin, growth).",
+      "Items with low scores on all dimensions need evaluation — remove or reformulate."
+    ],
+    "staff": [
+      "Staff data requires the 'collected_by' column from your POS system (available in Moka).",
+      "Staff ranking is based on total revenue processed, not hours worked.",
+      "Use this data for performance evaluation and team rewards/incentives."
+    ],
+    "kpi": [
+      "KPI targets are set based on cafe industry standards and your historical data.",
+      "Achievement above 100% means the target was exceeded — update the target for the next period.",
+      "Action plans help connect data insights to concrete team actions."
+    ]
   },
   "common": {
     "loading": "Loading...",

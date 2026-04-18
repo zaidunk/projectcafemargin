@@ -3,11 +3,14 @@ import { initReactI18next } from 'react-i18next'
 import id from './locales/id.json'
 import en from './locales/en.json'
 
+const DEFAULT_LANG = 'id'
+
 i18n.use(initReactI18next).init({
   resources: { id: { translation: id }, en: { translation: en } },
-  lng: localStorage.getItem('cafemargin_lang') || 'id',
-  fallbackLng: 'id',
+  lng: DEFAULT_LANG,
+  fallbackLng: DEFAULT_LANG,
   interpolation: { escapeValue: false },
+  react: { useSuspense: false },
 })
 
 export default i18n

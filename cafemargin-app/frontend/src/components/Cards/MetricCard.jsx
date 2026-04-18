@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import clsx from 'clsx'
 
 const GRADIENTS = {
@@ -11,7 +12,7 @@ const GRADIENTS = {
   rose:   'from-rose-700 via-rose-600 to-rose-500',
 }
 
-export default function MetricCard({ label, value, subvalue, icon: Icon, color = 'brand', trend, onClick, className }) {
+const MetricCard = memo(function MetricCard({ label, value, subvalue, icon: Icon, color = 'brand', trend, onClick, className }) {
   const gradient = GRADIENTS[color] || GRADIENTS.brand
 
   return (
@@ -26,18 +27,18 @@ export default function MetricCard({ label, value, subvalue, icon: Icon, color =
       {/* Background icon */}
       {Icon && (
         <div className="absolute top-3 right-3 opacity-15 z-0">
-          <Icon size={44} strokeWidth={1.5} />
+          <Icon className="icon-lg" strokeWidth={1.5} />
         </div>
       )}
 
       {/* Content */}
       <div className="relative z-10">
-        <p className="text-white/65 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">{label}</p>
-        <p className="text-white text-2xl font-extrabold leading-tight tracking-tight animate-count-up">{value}</p>
-        {subvalue && <p className="text-white/55 text-[11px] mt-1.5 font-medium">{subvalue}</p>}
+        <p className="text-white/65 text-[var(--text-xxs)] font-bold uppercase tracking-[0.15em] mb-2">{label}</p>
+        <p className="text-white text-[var(--text-xl)] font-extrabold leading-tight tracking-tight animate-count-up">{value}</p>
+        {subvalue && <p className="text-white/55 text-[var(--text-xs)] mt-1.5 font-medium">{subvalue}</p>}
         {trend !== undefined && trend !== null && (
           <div className={clsx(
-            'inline-flex items-center gap-1 mt-2.5 text-[10px] font-bold px-2 py-0.5 rounded-full',
+            'inline-flex items-center gap-1 mt-2.5 text-[var(--text-xxs)] font-bold px-2 py-0.5 rounded-full',
             trend >= 0 ? 'bg-white/20 text-white' : 'bg-red-900/40 text-red-200'
           )}>
             <span>{trend >= 0 ? '↑' : '↓'}</span>
@@ -47,4 +48,6 @@ export default function MetricCard({ label, value, subvalue, icon: Icon, color =
       </div>
     </div>
   )
-}
+})
+
+export default MetricCard

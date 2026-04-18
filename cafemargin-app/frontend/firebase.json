@@ -1,0 +1,15 @@
+{
+  "apphosting": {
+    "backendId": "cafemargin-web",
+    "rootDir": ".",
+    "ignore": [
+      "node_modules",
+      ".next",
+      ".env*",
+      ".git",
+      "firebase-debug.log",
+      "firebase-debug.*.log",
+      "functions"
+    ]
+  }
+}

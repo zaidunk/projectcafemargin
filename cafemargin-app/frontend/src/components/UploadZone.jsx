@@ -1,3 +1,5 @@
+'use client'
+
 import { useDropzone } from 'react-dropzone'
 import { useTranslation } from 'react-i18next'
 import { Upload, FileSpreadsheet, X } from 'lucide-react'
@@ -37,26 +39,26 @@ export default function UploadZone({ onFile, loading }) {
       <div className="relative flex flex-col items-center gap-3">
         {loading ? (
           <>
-            <div className="w-12 h-12 border-4 border-brand-200 border-t-brand-700 rounded-full animate-spin" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 border-4 border-brand-200 border-t-brand-700 rounded-full animate-spin" />
             <p className="font-semibold text-brand-600 text-sm">{t('transactions.uploading')}</p>
           </>
         ) : isDragActive ? (
           <>
-            <div className="w-12 h-12 bg-brand-100 rounded-2xl flex items-center justify-center animate-pulse-soft">
-              <FileSpreadsheet size={24} className="text-brand-700" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-brand-100 rounded-2xl flex items-center justify-center animate-pulse-soft">
+              <FileSpreadsheet className="text-brand-700 icon-md" />
             </div>
             <p className="font-semibold text-brand-700">Lepaskan file di sini</p>
           </>
         ) : (
           <>
-            <div className="w-12 h-12 bg-brand-100 rounded-2xl flex items-center justify-center">
-              <Upload size={22} className="text-brand-500" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-brand-100 rounded-2xl flex items-center justify-center">
+              <Upload className="text-brand-500 icon-md" />
             </div>
             <div>
               <p className="font-semibold text-brand-700 text-sm">{t('transactions.upload_hint')}</p>
               <p className="text-xs text-brand-400 mt-1">{t('transactions.upload_formats')}</p>
             </div>
-            <div className="flex items-center gap-4 mt-1 text-[11px] text-brand-400">
+            <div className="flex items-center gap-3 sm:gap-4 mt-1 text-[var(--text-xs)] text-brand-400">
               <span className="flex items-center gap-1">✓ Export Moka POS</span>
               <span className="flex items-center gap-1">✓ Template CafeMargin</span>
             </div>
