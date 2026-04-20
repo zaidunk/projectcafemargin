@@ -32,7 +32,6 @@ python app/scripts/init_supabase_buckets.py
 ```bash
 cd cafemargin-app/backend
 pip install -r requirements.txt
-python seed.py          # buat data demo
 uvicorn app.main:app --reload --port 8000
 ```
 
@@ -51,14 +50,15 @@ Frontend berjalan di: http://localhost:3000
 
 ---
 
-## Akun Demo (setelah seed.py)
+## Setup Akun
 
-| Role | Email | Password | Cafe |
-|---|---|---|---|
-| Superadmin | admin@cafemargin.id | admin123 | Semua |
-| Owner (Level GROWTH) | budi@kopinusantara.id | demo123 | Kopi Nusantara |
-| Staff | staff@kopinusantara.id | demo123 | Kopi Nusantara |
-| Owner (Level DIAGNOSTIC) | siti@rumahkopi.id | demo123 | Rumah Kopi Bandung |
+Tidak ada akun default. Buat superadmin pertama lewat endpoint:
+
+```
+POST /api/admin/users
+```
+
+Kemudian buat akun cafe owner dan staff lewat panel superadmin atau API yang sama.
 
 ---
 

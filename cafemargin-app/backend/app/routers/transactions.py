@@ -3,9 +3,10 @@ import uuid
 import re
 import mimetypes
 import os
+import logging
 from typing import Optional
 from datetime import datetime, date, timedelta
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Query
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Query, Request
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 import pandas as pd
@@ -18,8 +19,10 @@ from app.auth import get_current_user
 from app.models.user import User
 from app.services.storage_service import get_bucket_names, sanitize_filename, upload_bytes
 from app.services.transaction_loader import get_effective_date_range
+from app.security import apply_rate_limit
 
 router = APIRouter(prefix="/api/transactions", tags=["transactions"])
+logger = logging.getLogger("cafemargin.transactions")
 
 MAX_UPLOAD_MB = float(os.getenv("MAX_UPLOAD_MB", "50"))
 MAX_UPLOAD_BYTES = int(MAX_UPLOAD_MB * 1024 * 1024)
@@ -338,30 +341,24 @@ def _auto_create_menu_items(records: list, cafe_id: int, db: Session) -> list[st
 
 @router.post("/upload")
 def upload_transactions(
+    request: Request,
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     if current_user.role not in ("superadmin", "cafe_owner", "cafe_staff"):
         raise HTTPException(status_code=403, detail="Akses ditolak")
+    apply_rate_limit(request, str(current_user.id), prefix="upload")
     cafe_id = current_user.cafe_id
     if not cafe_id:
         raise HTTPException(status_code=400, detail="User belum terhubung ke cafe manapun. Hubungi admin.")
 
-    try:
-        file.file.seek(0, io.SEEK_END)
-        size_bytes = file.file.tell()
-        file.file.seek(0)
-    except Exception:
-        size_bytes = None
-
-    if size_bytes is not None and size_bytes > MAX_UPLOAD_BYTES:
-        max_label = int(MAX_UPLOAD_MB) if MAX_UPLOAD_MB.is_integer() else MAX_UPLOAD_MB
-        raise HTTPException(status_code=413, detail=f"File terlalu besar. Maks {max_label} MB")
-
     content = file.file.read()
     if not content:
         raise HTTPException(status_code=400, detail="File kosong atau tidak terbaca")
+    if len(content) > MAX_UPLOAD_BYTES:
+        max_label = int(MAX_UPLOAD_MB) if MAX_UPLOAD_MB.is_integer() else MAX_UPLOAD_MB
+        raise HTTPException(status_code=413, detail=f"File terlalu besar. Maks {max_label} MB")
 
     df = _read_file_bytes(content, file.filename or "")
     if df.empty:
@@ -627,9 +624,13 @@ def list_batches(db: Session = Depends(get_db), current_user: User = Depends(get
 def delete_batch(batch_id: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     if current_user.role not in ("superadmin", "cafe_owner"):
         raise HTTPException(status_code=403, detail="Akses ditolak")
+    cafe_id = current_user.cafe_id
+    if not cafe_id:
+        raise HTTPException(status_code=400, detail="User belum terhubung ke cafe manapun")
     deleted = db.query(Transaction).filter(
-        Transaction.cafe_id == current_user.cafe_id,
+        Transaction.cafe_id == cafe_id,
         Transaction.upload_batch == batch_id,
     ).delete()
     db.commit()
+    logger.info("Batch %s dihapus oleh user %s (cafe_id=%s, rows=%s)", batch_id, current_user.email, cafe_id, deleted)
     return {"deleted": deleted}

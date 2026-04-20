@@ -18,6 +18,7 @@ export default function Settings() {
   const [cafe, setCafe] = useState(null)
   const [menuItems, setMenuItems] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [cafeForm, setCafeForm] = useState({})
   const [pwForm, setPwForm] = useState({ current_password: '', new_password: '' })
   const [showAddMenu, setShowAddMenu] = useState(false)
@@ -25,11 +26,13 @@ export default function Settings() {
   const [editItemId, setEditItemId] = useState(null)
 
   const fetchData = useCallback(() => {
+    setLoading(true)
+    setError(false)
     Promise.all([api.get('/settings/cafe'), api.get('/menu')]).then(([cafeRes, menuRes]) => {
       setCafe(cafeRes.data)
       setCafeForm({ name: cafeRes.data.name, owner_name: cafeRes.data.owner_name, address: cafeRes.data.address || '', phone: cafeRes.data.phone || '' })
       setMenuItems(menuRes.data)
-    }).catch(() => {}).finally(() => setLoading(false))
+    }).catch(() => setError(true)).finally(() => setLoading(false))
   }, [])
 
   useEffect(() => { fetchData() }, [fetchData])
@@ -96,6 +99,7 @@ export default function Settings() {
   return (
     <AppLayout title={t('nav.settings')}>
       <div className="space-y-5 max-w-3xl">
+        {error && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">Gagal memuat data. Silakan coba lagi nanti.</div>}
         {/* Cafe Profile */}
         <div className="card">
           <h3 className="font-semibold text-brand-800 mb-4">{t('settings.cafe_profile')}</h3>

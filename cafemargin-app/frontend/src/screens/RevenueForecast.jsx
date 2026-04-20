@@ -13,13 +13,15 @@ export default function RevenueForecast() {
   const { t } = useTranslation()
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [period, setPeriod] = useState(9999)
   const [forecastDays, setForecastDays] = useState(7)
 
   useEffect(() => {
     setLoading(true)
+    setError(false)
     api.get(`/advanced/forecast?period_days=${period}&forecast_days=${forecastDays}`)
-      .then(r => setData(r.data)).catch(() => {}).finally(() => setLoading(false))
+      .then(r => setData(r.data)).catch(() => setError(true)).finally(() => setLoading(false))
   }, [period, forecastDays])
 
   const chartData = [
@@ -54,6 +56,7 @@ export default function RevenueForecast() {
           tips={(t('tips.forecast', { returnObjects: true }) || []).map((text, i) => ({ icon: ['📈','🎯','📅','📦','〰️'][i] || '💡', text }))}
         />
 
+        {error && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">Gagal memuat data. Silakan coba lagi nanti.</div>}
         {loading ? <div className="skeleton h-64 rounded-2xl" /> : data && (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

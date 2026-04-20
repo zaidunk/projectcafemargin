@@ -27,7 +27,7 @@ echo ============================================
 echo    CafeMargin is RUNNING!
 echo    Frontend: http://localhost:3000
 echo    Backend:  http://localhost:8000
-echo    Login:    admin / admin
+echo    Buat akun lewat POST /api/admin/users
 echo ============================================
 echo.
 echo Tekan tombol apa saja untuk menutup launcher ini...

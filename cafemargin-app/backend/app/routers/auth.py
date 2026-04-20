@@ -14,6 +14,7 @@ from app.security import (
     register_failed_attempt,
     clear_failed_attempts,
     validate_password,
+    apply_rate_limit,
 )
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -41,16 +42,19 @@ class MeResponse(BaseModel):
 def login(request: Request, form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     client_ip = get_client_ip(request)
     key = rate_limit_key(form.username, client_ip)
-    if is_rate_limited(key):
+    user_key = f"user:{(form.username or '').strip().lower()}"
+    if is_rate_limited(key) or is_rate_limited(user_key):
         raise HTTPException(status_code=429, detail="Terlalu banyak percobaan login. Coba lagi beberapa menit")
 
     user = db.query(User).filter(User.email == form.username).first()
     if not user or not verify_password(form.password, user.password_hash):
         register_failed_attempt(key)
+        register_failed_attempt(user_key)
         logger.warning("Login gagal untuk %s dari %s", form.username, client_ip)
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email atau password salah")
 
     clear_failed_attempts(key)
+    clear_failed_attempts(user_key)
     logger.info("Login sukses untuk %s dari %s", user.email, client_ip)
 
     token = create_access_token({"sub": str(user.id), "role": user.role, "cafe_id": user.cafe_id})
@@ -120,7 +124,8 @@ class ChangePassword(BaseModel):
 
 
 @router.put("/change-password")
-def change_password(body: ChangePassword, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def change_password(request: Request, body: ChangePassword, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    apply_rate_limit(request, current_user.email, prefix="chpw")
     if not verify_password(body.current_password, current_user.password_hash):
         raise HTTPException(status_code=400, detail="Password lama tidak sesuai")
     if body.current_password == body.new_password:
@@ -130,4 +135,5 @@ def change_password(body: ChangePassword, current_user: User = Depends(get_curre
         raise HTTPException(status_code=400, detail=error)
     current_user.password_hash = hash_password(body.new_password)
     db.commit()
+    logger.info("Password diubah untuk user %s", current_user.email)
     return {"message": "Password berhasil diubah"}

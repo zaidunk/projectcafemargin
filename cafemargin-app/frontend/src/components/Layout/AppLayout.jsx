@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
+import PostLoginPopup from '../PostLoginPopup'
 
 export default function AppLayout({ title, children }) {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -16,6 +17,7 @@ export default function AppLayout({ title, children }) {
 
   return (
     <div className="flex min-h-screen bg-brand-50">
+      <PostLoginPopup />
       <Sidebar mobileOpen={mobileOpen} onMobileClose={handleClose} />
       <div className="flex-1 flex flex-col min-w-0">
         <Topbar title={title} onToggleSidebar={handleOpen} />

@@ -64,6 +64,6 @@ def get_asset_signed_url(
     try:
         signed_url = create_signed_url(asset.bucket, asset.path, ttl)
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Gagal membuat signed URL: {exc}")
+        raise HTTPException(status_code=500, detail="Gagal membuat signed URL")
 
     return {"signed_url": signed_url, "expires_in": ttl}

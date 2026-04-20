@@ -1,5 +1,6 @@
 """
-Seed script: membuat data demo untuk testing CafeMargin
+Seed script: membuat data sample cafe + transaksi untuk dev/testing.
+JANGAN jalankan di production — tidak membuat user, buat user lewat /api/admin/users.
 Jalankan: python seed.py
 """
 import sys
@@ -30,13 +31,7 @@ db.commit()
 db.refresh(cafe1)
 db.refresh(cafe2)
 
-# ---------- Users ----------
-superadmin = User(email="admin", password_hash=hash_password("admin"), full_name="CafeMargin Admin", role="superadmin", cafe_id=cafe1.id)
-owner1 = User(email="budi@kopinusantara.id", password_hash=hash_password("demo123"), full_name="Budi Santoso", role="cafe_owner", cafe_id=cafe1.id)
-staff1 = User(email="staff@kopinusantara.id", password_hash=hash_password("demo123"), full_name="Andi Wijaya", role="cafe_staff", cafe_id=cafe1.id)
-owner2 = User(email="siti@rumahkopi.id", password_hash=hash_password("demo123"), full_name="Siti Rahayu", role="cafe_owner", cafe_id=cafe2.id)
-db.add_all([superadmin, owner1, staff1, owner2])
-db.commit()
+# User tidak dibuat oleh seed — buat lewat POST /api/admin/users setelah superadmin pertama dibuat
 
 # ---------- Menu Items Cafe 1 ----------
 menu_items_c1 = [
@@ -133,12 +128,8 @@ db.add_all(action_plans)
 db.commit()
 
 print("=" * 50)
-print("Seed berhasil! Akun demo:")
-print("=" * 50)
-print("Superadmin  : admin / admin")
-print("Owner Cafe 1: budi@kopinusantara.id / demo123  (Level GROWTH)")
-print("Staff Cafe 1: staff@kopinusantara.id / demo123")
-print("Owner Cafe 2: siti@rumahkopi.id / demo123      (Level DIAGNOSTIC)")
-print("=" * 50)
+print("Seed berhasil!")
 print(f"Total transaksi seed: {len(transactions)}")
+print("Buat user lewat: POST /api/admin/users")
+print("=" * 50)
 db.close()

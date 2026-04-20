@@ -24,10 +24,12 @@ export default function TransactionAnalytics() {
   const [revenueByDate, setRevenueByDate] = useState([])
   const [period, setPeriod] = useState(9999)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [paymentBreakdown, setPaymentBreakdown] = useState([])
 
   const fetchData = useCallback(() => {
     setLoading(true)
+    setError(false)
     Promise.all([
       api.get(`/transactions?period_days=${period}`),
       api.get(`/analytics/revenue?period_days=${period}`),
@@ -38,7 +40,7 @@ export default function TransactionAnalytics() {
       setRevenueByDate(analyticsRes.data.revenue_by_date || [])
       setPaymentBreakdown(analyticsRes.data.payment_method_breakdown || [])
       setBatches(batchRes.data || [])
-    }).catch(() => {}).finally(() => setLoading(false))
+    }).catch(() => setError(true)).finally(() => setLoading(false))
   }, [period])
 
   useEffect(() => { fetchData() }, [fetchData])
@@ -179,6 +181,7 @@ export default function TransactionAnalytics() {
           </div>
         </div>
 
+        {error && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">Gagal memuat data. Silakan coba lagi nanti.</div>}
         {loading ? (
           <div className="grid grid-cols-3 gap-4">
             {[...Array(3)].map((_, i) => <div key={i} className="skeleton h-24 rounded-2xl" />)}

@@ -14,12 +14,14 @@ export default function SalesComparison() {
   const { t } = useTranslation()
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [period, setPeriod] = useState(9999)
 
   useEffect(() => {
     setLoading(true)
+    setError(false)
     api.get(`/advanced/comparison?period_days=${period}`)
-      .then(r => setData(r.data)).catch(() => {}).finally(() => setLoading(false))
+      .then(r => setData(r.data)).catch(() => setError(true)).finally(() => setLoading(false))
   }, [period])
 
   const comparison = data?.comparison || []
@@ -42,8 +44,8 @@ export default function SalesComparison() {
           color="blue"
           tips={(t('tips.comparison', { returnObjects: true }) || []).map((text, i) => ({ icon: ['📊','📈','🎯'][i] || '💡', text }))}
         />
-        </div>
 
+        {error && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">Gagal memuat data. Silakan coba lagi nanti.</div>}
         {loading ? <div className="skeleton h-64 rounded-2xl" /> : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -52,6 +52,16 @@ def clear_failed_attempts(key: str) -> None:
     _blocked_until.pop(key, None)
 
 
+def apply_rate_limit(request, identifier: str = "", prefix: str = "ep") -> None:
+    """Frequency-based rate limit for sensitive endpoints (independent of login counters)."""
+    from fastapi import HTTPException
+    client_ip = get_client_ip(request)
+    key = f"{prefix}:{client_ip}:{(identifier or '').strip().lower()}"
+    if is_rate_limited(key):
+        raise HTTPException(status_code=429, detail="Terlalu banyak permintaan. Coba lagi beberapa menit")
+    register_failed_attempt(key)
+
+
 def validate_password(password: str) -> str | None:
     if not password or len(password) < 8:
         return "Password minimal 8 karakter"
@@ -59,4 +69,6 @@ def validate_password(password: str) -> str | None:
         return "Password harus mengandung huruf"
     if not re.search(r"\d", password):
         return "Password harus mengandung angka"
+    if not re.search(r"[^A-Za-z0-9]", password):
+        return "Password harus mengandung karakter spesial (contoh: ! @ # $ % & *)"
     return None

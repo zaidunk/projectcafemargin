@@ -38,6 +38,7 @@ const PromoSimulator = dynamic(() => import('../../../screens/PromoSimulator'), 
 const MenuOptimizer = dynamic(() => import('../../../screens/MenuOptimizer'), { ssr: false, loading: ScreenLoader })
 const FeatureHub = dynamic(() => import('../../../screens/FeatureHub'), { ssr: false, loading: ScreenLoader })
 const TemplateGuide = dynamic(() => import('../../../screens/TemplateGuide'), { ssr: false, loading: ScreenLoader })
+const ModulCafeMargin = dynamic(() => import('../../../screens/ModulCafeMargin'), { ssr: false, loading: ScreenLoader })
 
 const ROUTES = {
   dashboard: Dashboard,
@@ -62,6 +63,7 @@ const ROUTES = {
   'menu-optimizer': MenuOptimizer,
   features: FeatureHub,
   'template-guide': TemplateGuide,
+  modul: ModulCafeMargin,
 }
 
 export default function AppRoutePage() {
@@ -85,5 +87,5 @@ export default function AppRoutePage() {
 
   if (!hydrated || !user || !Screen) return <ScreenLoader />
 
-  return <Screen />
+  return <Screen key={user?.id} />
 }

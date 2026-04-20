@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
-import { BarChart2, MessageCircle, Send, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { MessageCircle, Send, ArrowLeft, CheckCircle2 } from 'lucide-react'
 
 const WHATSAPP_NUMBER = '6287888760105'
-const TEMPLATE_MESSAGE = 'Halo saya mau daftar akun blablabla'
+const TEMPLATE_MESSAGE = 'Halo, saya ingin mendaftarkan akun CafeMargin untuk cafe saya. Mohon bantu proses aktivasinya. Terima kasih!'
 
 export default function CreateAccount() {
   const { t } = useTranslation()
@@ -46,9 +46,7 @@ export default function CreateAccount() {
         </div>
 
         <div className="relative flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center">
-            <BarChart2 className="text-white icon-md" />
-          </div>
+          <img src="/logo.jpeg" alt="CafeMargin" className="w-10 h-10 rounded-2xl object-cover" />
           <span className="text-white font-bold text-xl">CafeMargin</span>
         </div>
 
@@ -71,9 +69,7 @@ export default function CreateAccount() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6">
         <div className="w-full max-w-[460px] animate-fade-in">
           <div className="lg:hidden flex items-center gap-3 mb-8 justify-center">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center">
-              <BarChart2 className="text-white icon-md" />
-            </div>
+            <img src="/logo.jpeg" alt="CafeMargin" className="w-10 h-10 rounded-2xl object-cover" />
             <span className="text-white font-bold text-xl">CafeMargin</span>
           </div>
 

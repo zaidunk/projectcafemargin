@@ -30,7 +30,7 @@ import {
   Calculator,
   ChevronDown,
   MoreHorizontal,
-  Zap,
+  GraduationCap,
   PanelLeftClose,
   PanelLeft,
   BookOpen,
@@ -49,6 +49,7 @@ const MAIN_NAV = [
   { to: '/transactions',   icon: Receipt,         label: 'nav.upload_transaction', minLevel: 1 },
   { to: '/template-guide', icon: BookOpen,        label: 'nav.template_guide',     minLevel: 1 },
   { to: '/reports',        icon: FileText,        label: 'nav.reports',            minLevel: 1 },
+  { to: '/modul',          icon: GraduationCap,   label: 'nav.modul',              minLevel: 1 },
   { to: '/features',       icon: Sparkles,        label: 'nav.features',           minLevel: 1 },
   { to: '/settings',       icon: Settings,        label: 'nav.settings',           minLevel: 1 },
 ]
@@ -115,9 +116,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
       }}>
       {/* Logo */}
       <div className={clsx('flex items-center gap-3 px-3 pt-5 pb-3', isCollapsed && 'justify-center')}>
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center shadow-glow flex-shrink-0">
-          <Zap className="text-white icon-sm" />
-        </div>
+        <img src="/logo.jpeg" alt="CafeMargin" className="w-8 h-8 rounded-xl object-cover shadow-glow flex-shrink-0" />
         {!isCollapsed && (
           <div className="min-w-0">
             <p className="font-bold text-white text-sm leading-tight">CafeMargin</p>

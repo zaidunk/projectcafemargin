@@ -9,12 +9,10 @@ from app.database import get_db
 from app.models.user import User
 import os
 
-APP_ENV = os.getenv("APP_ENV", "development")
 SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
-    if APP_ENV == "production":
-        raise RuntimeError("SECRET_KEY is required in production")
-    SECRET_KEY = "cafemargin-secret-key-xolvon-2026"
+    raise RuntimeError("SECRET_KEY environment variable is required")
+APP_ENV = os.getenv("APP_ENV", "development")
 ALGORITHM = "HS256"
 default_expire = "8" if APP_ENV == "production" else "24"
 ACCESS_TOKEN_EXPIRE_HOURS = int(os.getenv("ACCESS_TOKEN_EXPIRE_HOURS", default_expire))

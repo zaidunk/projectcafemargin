@@ -1,15 +1,19 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+import logging
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import Optional
 from app.database import get_db
 from app.models.cafe import Cafe
 from app.models.user import User
 from app.auth import hash_password, require_superadmin
-from app.security import validate_password
+from app.security import validate_password, apply_rate_limit
+
+_ALLOWED_ROLES = {"superadmin", "cafe_owner", "cafe_staff"}
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
+logger = logging.getLogger("cafemargin.admin")
 
 
 class CafeCreate(BaseModel):
@@ -26,6 +30,13 @@ class UserCreate(BaseModel):
     full_name: str
     role: str = "cafe_owner"
     cafe_id: Optional[int] = None
+
+    @field_validator("role")
+    @classmethod
+    def validate_role(cls, v: str) -> str:
+        if v not in _ALLOWED_ROLES:
+            raise ValueError(f"Role harus salah satu dari: {', '.join(sorted(_ALLOWED_ROLES))}")
+        return v
 
 
 @router.get("/cafes")
@@ -106,7 +117,8 @@ def list_users(
 
 
 @router.post("/users")
-def create_user(body: UserCreate, db: Session = Depends(get_db), _=Depends(require_superadmin)):
+def create_user(request: Request, body: UserCreate, db: Session = Depends(get_db), _=Depends(require_superadmin)):
+    apply_rate_limit(request, body.email, prefix="admin_cu")
     existing = db.query(User).filter(User.email == body.email).first()
     if existing:
         raise HTTPException(status_code=400, detail="Email sudah terdaftar")
@@ -123,6 +135,7 @@ def create_user(body: UserCreate, db: Session = Depends(get_db), _=Depends(requi
     db.add(user)
     db.commit()
     db.refresh(user)
+    logger.info("User dibuat: %s (role=%s, cafe_id=%s)", user.email, user.role, user.cafe_id)
     return {"id": user.id, "email": user.email}
 
 
@@ -131,6 +144,8 @@ def delete_user(user_id: int, db: Session = Depends(get_db), _=Depends(require_s
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    email = user.email
     db.delete(user)
     db.commit()
+    logger.info("User dihapus: %s (id=%s)", email, user_id)
     return {"message": "User deleted"}

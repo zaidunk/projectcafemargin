@@ -20,18 +20,20 @@ export default function KPIDashboard() {
   const [plans, setPlans] = useState([])
   const [targets, setTargets] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [showAddPlan, setShowAddPlan] = useState(false)
   const [newPlan, setNewPlan] = useState({ action_text: '', assignee: '', due_date: '', status: 'todo' })
 
   const fetchData = useCallback(() => {
     setLoading(true)
+    setError(false)
     Promise.all([
       api.get('/kpi/action-plans'),
       api.get('/kpi/targets'),
     ]).then(([plansRes, targetsRes]) => {
       setPlans(plansRes.data)
       setTargets(targetsRes.data)
-    }).catch(() => {}).finally(() => setLoading(false))
+    }).catch(() => setError(true)).finally(() => setLoading(false))
   }, [])
 
   useEffect(() => { fetchData() }, [fetchData])
@@ -72,6 +74,7 @@ export default function KPIDashboard() {
           tips={(t('tips.kpi', { returnObjects: true }) || []).map((text, i) => ({ icon: ['🎯','📋','✅','📈'][i] || '💡', text }))}
         />
 
+        {error && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">Gagal memuat data. Silakan coba lagi nanti.</div>}
         {loading ? (
           <div className="flex justify-center py-12">
             <div className="w-8 h-8 border-4 border-brand-300 border-t-brand-700 rounded-full animate-spin" />

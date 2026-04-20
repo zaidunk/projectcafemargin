@@ -15,7 +15,10 @@
       "Bash(curl -s http://localhost:8000/docs)",
       "WebFetch(domain:cafemargin-web--cafe-margin.asia-southeast1.hosted.app)",
       "WebFetch(domain:xolvon-pcm2.hf.space)",
-      "Bash(cmd *)"
+      "Bash(cmd *)",
+      "Bash(curl -s -N -H \"Authorization: Bearer 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\" \"https://huggingface.co/api/spaces/xolvon/pcm2/logs/run\")",
+      "Bash(grep -E \"\\\\.py$\")",
+      "Bash(xargs grep *)"
     ]
   }
 }

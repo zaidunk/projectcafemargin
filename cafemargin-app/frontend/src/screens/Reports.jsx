@@ -32,6 +32,7 @@ export default function Reports() {
     { days: 7, label: '7 Hari Terakhir' },
     { days: 30, label: '30 Hari Terakhir' },
     { days: 90, label: '90 Hari Terakhir' },
+    { days: 9999, label: 'Semua Data' },
   ]
 
   return (

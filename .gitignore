@@ -1,0 +1,18 @@
+cafemargin-app/backend/cafemargin.db
+tools/supabase.exe
+cafemargin-app/frontend/.next/
+
+# Environment files — NEVER commit secrets
+.env
+.env.local
+.env.production
+.env.*.local
+**/.env
+**/.env.local
+**/.env.production
+cafemargin-app/.env
+cafemargin-app/backend/.env
+cafemargin-app/frontend/.env.local
+
+# Claude Code settings — may contain tokens
+.claude/settings.local.json

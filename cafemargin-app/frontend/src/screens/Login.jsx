@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
-import { BarChart2, Eye, EyeOff, ArrowRight, Sparkles } from 'lucide-react'
+import { Eye, EyeOff, ArrowRight, Sparkles } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function Login() {
@@ -45,9 +45,7 @@ export default function Login() {
 
         {/* Logo */}
         <div className="relative flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center">
-            <BarChart2 className="text-white icon-md" />
-          </div>
+          <img src="/logo.jpeg" alt="CafeMargin" className="w-10 h-10 rounded-2xl object-cover" />
           <span className="text-white font-bold text-xl">CafeMargin</span>
         </div>
 
@@ -90,9 +88,7 @@ export default function Login() {
         <div className="w-full max-w-[420px] animate-fade-in">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-3 mb-8 justify-center">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center">
-              <BarChart2 className="text-white icon-md" />
-            </div>
+            <img src="/logo.jpeg" alt="CafeMargin" className="w-10 h-10 rounded-2xl object-cover" />
             <span className="text-white font-bold text-xl">CafeMargin</span>
           </div>
 
@@ -163,14 +159,6 @@ export default function Login() {
               </Link>
             </div>
 
-            {/* Demo hint */}
-            <div className="mt-5 p-3.5 bg-brand-50 rounded-xl border border-brand-100">
-              <p className="text-[var(--text-xs)] text-brand-500 font-semibold uppercase tracking-wide mb-1.5">Demo Akun</p>
-              <div className="space-y-1">
-                <p className="text-xs text-brand-700 font-mono">admin</p>
-                <p className="text-xs text-brand-500 font-mono">password: admin</p>
-              </div>
-            </div>
           </div>
 
           <p className="text-center text-white/30 text-xs mt-5">

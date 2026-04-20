@@ -17,12 +17,14 @@ export default function MarginAnalysis() {
   const [period, setPeriod] = useState(9999)
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     setLoading(true)
+    setError(false)
     api.get(`/analytics/margin?period_days=${period}`)
       .then((r) => setData(r.data))
-      .catch(() => {})
+      .catch(() => setError(true))
       .finally(() => setLoading(false))
   }, [period])
 
@@ -56,6 +58,7 @@ export default function MarginAnalysis() {
           tips={(t('tips.margin', { returnObjects: true }) || []).map((text, i) => ({ icon: ['💰','⚠️','🔍','💡','📝'][i] || '💡', text }))}
         />
 
+        {error && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">Gagal memuat data. Silakan coba lagi nanti.</div>}
         {loading ? (
           <div className="flex justify-center py-12">
             <div className="w-8 h-8 border-4 border-brand-300 border-t-brand-700 rounded-full animate-spin" />

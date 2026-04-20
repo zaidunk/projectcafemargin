@@ -27,7 +27,7 @@ def _get_df(cafe_id: int, period_days: int, db: Session):
         include_receipt=True,
         include_discounts=True,
         include_gross_sales=True,
-        include_collected_by=True,
+        include_collected_by=False,
     )
 
 

@@ -13,16 +13,18 @@ export default function PromoSimulator() {
   const { t } = useTranslation()
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [selectedItem, setSelectedItem] = useState('')
   const [discountPct, setDiscountPct] = useState(10)
   const [volumeBoost, setVolumeBoost] = useState(20)
 
   useEffect(() => {
     setLoading(true)
+    setError(false)
     const params = new URLSearchParams({ period_days: 9999, discount_pct: discountPct, volume_boost_pct: volumeBoost })
     if (selectedItem) params.set('item_name', selectedItem)
     api.get(`/advanced/promo-simulator?${params}`)
-      .then(r => setData(r.data)).catch(() => {}).finally(() => setLoading(false))
+      .then(r => setData(r.data)).catch(() => setError(true)).finally(() => setLoading(false))
   }, [selectedItem, discountPct, volumeBoost])
 
   const items = data?.items || []
@@ -64,6 +66,7 @@ export default function PromoSimulator() {
           </div>
         </div>
 
+        {error && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">Gagal memuat data. Silakan coba lagi nanti.</div>}
         {loading ? <div className="skeleton h-40 rounded-2xl" /> : sim?.item_name && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -5,10 +5,13 @@ from app.database import engine, Base
 from app.models import Cafe, User, Transaction, MenuItem, ActionPlan, KPITarget, StorageAsset  # noqa: ensure all models are registered
 from app.routers import auth, transactions, analytics, menu, kpi, reports, settings, admin, advanced, storage
 
+_is_prod = os.getenv("APP_ENV") == "production"
 app = FastAPI(
     title="CafeMargin Analytics API",
     description="Strategic Data Analytics Platform for Cafes — PT Xolvon Kehidupan Cerdas Abadi",
     version="1.0.0",
+    docs_url=None if _is_prod else "/docs",
+    redoc_url=None,
 )
 
 allowed_origins = [
@@ -19,7 +22,7 @@ allowed_origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins or ["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -43,12 +46,7 @@ app.include_router(storage.router)
 
 @app.get("/")
 def root():
-    return {
-        "app": "CafeMargin Analytics API",
-        "version": "1.0.0",
-        "company": "PT Xolvon Kehidupan Cerdas Abadi",
-        "docs": "/docs",
-    }
+    return {"app": "CafeMargin Analytics API", "status": "ok"}
 
 
 @app.get("/health")

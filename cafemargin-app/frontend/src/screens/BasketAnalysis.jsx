@@ -20,13 +20,15 @@ export default function BasketAnalysis() {
   const { t } = useTranslation()
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [period, setPeriod] = useState(9999)
   const [roleFilter, setRoleFilter] = useState('all')
 
   useEffect(() => {
     setLoading(true)
+    setError(false)
     api.get(`/advanced/baskets?period_days=${period}`)
-      .then(r => setData(r.data)).catch(() => {}).finally(() => setLoading(false))
+      .then(r => setData(r.data)).catch(() => setError(true)).finally(() => setLoading(false))
   }, [period])
 
   const stats = data?.basket_stats || {}
@@ -74,6 +76,7 @@ export default function BasketAnalysis() {
           tips={(t('tips.basket', { returnObjects: true }) || []).map((text, i) => ({ icon: ['🧺','📊','🔗','⚓','🤝','💰'][i] || '💡', text }))}
         />
 
+        {error && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">Gagal memuat data. Silakan coba lagi nanti.</div>}
         {loading ? <div className="skeleton h-64 rounded-2xl" /> : (
           <>
             {/* Stats */}

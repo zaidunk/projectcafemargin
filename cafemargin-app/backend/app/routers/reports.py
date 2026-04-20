@@ -22,6 +22,8 @@ def executive_summary_pdf(
     current_user: User = Depends(get_current_user),
 ):
     cafe_id = current_user.cafe_id
+    if not cafe_id:
+        raise HTTPException(status_code=400, detail="User belum terhubung ke cafe manapun")
     cafe = db.query(Cafe).filter(Cafe.id == cafe_id).first()
     cafe_name = cafe.name if cafe else "Cafe"
 
